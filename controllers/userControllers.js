@@ -22,10 +22,33 @@ const buildToken = (user) => {
 
 const register = async (req, res) => {
   try {
+    console.log('Registration request body:', req.body);
+    console.log('Registration request headers:', req.headers['content-type']);
+    
     const { username, email, password } = req.body;
 
-    if (!(username && email && password)) {
-      throw new Error("All input required");
+    // More specific validation
+    if (!username || !email || !password) {
+      console.log('Missing fields:', { 
+        username: !!username, 
+        email: !!email, 
+        password: !!password 
+      });
+      return res.status(400).json({ 
+        error: "All fields (username, email, password) are required",
+        received: { username: !!username, email: !!email, password: !!password }
+      });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: "Invalid email format" });
+    }
+
+    // Validate password length
+    if (password.length < 6) {
+      return res.status(400).json({ error: "Password must be at least 6 characters long" });
     }
 
     const normalizedEmail = email.toLowerCase();
@@ -37,7 +60,10 @@ const register = async (req, res) => {
     });
 
     if (existingUser) {
-      throw new Error("Email and username must be unique");
+      const conflictField = existingUser.email === normalizedEmail ? 'email' : 'username';
+      return res.status(400).json({ 
+        error: `${conflictField.charAt(0).toUpperCase() + conflictField.slice(1)} already exists` 
+      });
     }
 
     const user = await User.create({
@@ -50,6 +76,7 @@ const register = async (req, res) => {
 
     return res.json(getUserDict(token, user));
   } catch (err) {
+    console.error('Registration error:', err);
     return res.status(400).json({ error: err.message });
   }
 };
