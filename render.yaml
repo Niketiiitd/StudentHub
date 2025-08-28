@@ -2,20 +2,20 @@ services:
   - type: web
     name: studenthub
     env: node
-    buildCommand: npm install && npm run build
-    startCommand: npm start
+    buildCommand: npm install && cd client && npm install && npm run build && cd ..
+    startCommand: node server.js
     envVars:
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: 3000
       - key: MONGO_URI
-        sync: false
-      - key: TOKEN_KEY
         sync: false
       - key: ACCESS_TOKEN_SECRET
         sync: false
       - key: ACCESS_TOKEN_EXPIRY
-        value: 2h
+        value: 2H
       - key: ACCESS_REFRESH_TOKEN
         sync: false
       - key: REFRESH_TOKEN_EXPIRY
-        value: 7d
+        value: 1d

@@ -22,17 +22,11 @@ const io = require("socket.io")(httpServer, {
 io.use(authSocket);
 io.on("connection", (socket) => socketServer(socket));
 
-(async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log("MongoDB connected");
-  } catch (err) {
-    console.error("MongoDB connection error:", err);
-  }
-})();
+// Update MongoDB connection
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB Connected"))
+  .catch((err) => console.log("MongoDB Connection Error: ", err));
 
 httpServer.listen(process.env.PORT || 4000, () => {
   console.log("Listening");
@@ -48,7 +42,7 @@ app.use("/api/messages", messages);
 // Serve static assets in production
 if (process.env.NODE_ENV === "production") {
   // Set static folder
-  app.use(express.static(path.join(__dirname, "/client/build")));
+  app.use(express.static("client/build"));
 
   // Any route that is not an API route will be redirected to the index.html
   app.get("*", (req, res) => {
@@ -58,4 +52,18 @@ if (process.env.NODE_ENV === "production") {
   app.get("/", (req, res) => {
     res.send("API is running...");
   });
+}
+
+// For debugging build folder issues
+const fs = require('fs');
+const buildPath = path.resolve(__dirname, 'client', 'build');
+const indexPath = path.resolve(buildPath, 'index.html');
+
+console.log('Checking for build folder...');
+console.log(`Build folder path: ${buildPath}`);
+console.log(`Build folder exists: ${fs.existsSync(buildPath)}`);
+if (fs.existsSync(buildPath)) {
+  console.log('Build folder contents:');
+  console.log(fs.readdirSync(buildPath));
+  console.log(`index.html exists: ${fs.existsSync(indexPath)}`);
 }
