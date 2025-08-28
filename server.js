@@ -77,10 +77,10 @@ if (process.env.NODE_ENV === "production") {
     console.log("Neither build nor public folder found");
     app.get("*", (req, res) => {
       res.send("Error: Client build not found. Please check deployment logs.");
-
-
-
-
-  app.get("/", (req, res) => {} else {  }    });    res.send("API is running...");
+    });
+  }
+} else {
+  app.get("/", (req, res) => {
+    res.send("API is running...");
   });
 }
