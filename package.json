@@ -1,12 +1,15 @@
 {
-  "name": "server",
+  "name": "studenthub",
   "version": "1.0.0",
-  "description": "",
+  "description": "A Community-Driven Social Media Platform for Students",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
     "server": "nodemon server.js",
-    "heroku-postbuild": "cd client && npm install && npm run build",
+    "client": "cd client && npm start",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "cd client && npm install && npm run build",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client",
     "lint": "eslint . ."
   },
   "author": "",
@@ -27,8 +30,12 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",
+    "concurrently": "^7.0.0",
     "eslint": "^9.11.1",
     "eslint-plugin-react": "^7.37.1",
     "globals": "^15.10.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   }
 }

@@ -50,6 +50,59 @@ StudentHub is a specialized social media platform designed to connect students, 
 - **CORS** - Cross-origin resource sharing
 - **Multer** - File upload handling
 
+## 🚀 Deployment on Render
+
+### Prerequisites
+- [Render](https://render.com/) account
+- Your project pushed to a GitHub repository
+
+### Deployment Steps
+
+1. **Log in to Render**
+   - Go to [Render Dashboard](https://dashboard.render.com/)
+   - Sign in or create an account
+
+2. **Create a New Web Service**
+   - Click "New +" and select "Web Service"
+   - Connect your GitHub repository
+   - Select the repository with your StudentHub project
+
+3. **Configure the Web Service**
+   - **Name**: Choose a name for your service (e.g., studenthub)
+   - **Environment**: Select "Node"
+   - **Build Command**: `npm install && npm run build`
+   - **Start Command**: `npm start`
+   
+4. **Set Environment Variables**
+   - Scroll down to the "Environment" section
+   - Add all required environment variables:
+     ```
+     NODE_ENV=production
+     MONGO_URI=your_mongodb_connection_string
+     TOKEN_KEY=your_jwt_secret_key
+     ACCESS_TOKEN_SECRET=your_access_token_secret
+     ACCESS_TOKEN_EXPIRY=2h
+     ACCESS_REFRESH_TOKEN=your_refresh_token_secret
+     REFRESH_TOKEN_EXPIRY=7d
+     PORT=10000
+     ```
+     Note: Render automatically sets the PORT environment variable, but you can specify a custom one if needed.
+
+5. **Deploy the Service**
+   - Click "Create Web Service"
+   - Wait for the build and deployment to complete
+
+6. **Access Your Deployed Application**
+   - Once deployment is successful, your app will be available at the URL provided by Render
+   - The URL will be in the format: `https://your-service-name.onrender.com`
+
+### Updating Your Deployed Application
+
+When you push changes to your connected GitHub repository, Render will automatically rebuild and deploy your application. For manual deployments:
+
+1. Go to your Web Service in the Render dashboard
+2. Click "Manual Deploy" and select "Deploy latest commit"
+
 ## 📦 Installation and Setup
 
 ### Prerequisites
@@ -172,45 +225,5 @@ StudentHub is a specialized social media platform designed to connect students, 
 - **Pages**: Main application views (Home, Profile, Chat, etc.)
 - **Hooks**: Custom React hooks for state management and API calls
 - **Utils**: Helper functions and Socket.io configuration
-=======
-## Installation and usage
-
-1. Clone this repository
-
-2. Install dependencies
-
-```
-npm install
-cd client
-npm install
-```
-
-3. Create .env in root directory
-
-```
-cd ..
-touch .env
-```
-
-4. Configure environment variables in your new .env file. To acquire your MONGO_URI, create a cluster for free over at https://www.mongodb.com/. The TOKEN_KEY is a secret key of your choosing, you can generate one at this site: https://randomkeygen.com/.
-
-```
-MONGO_URI=<YOUR_MONGO_URI>
-TOKEN_KEY=<YOUR_TOKEN_KEY>
-PORT=4000
-```
-
-5. Run the server
-
-```
-npm run server
-```
-
-6. Start a new terminal and run react's development server
-
-```
-cd client
-npm start
-```
 
 
