@@ -15,7 +15,11 @@ dotenv.config();
 const httpServer = require("http").createServer(app);
 const io = require("socket.io")(httpServer, {
   cors: {
-    origin: ["http://localhost:3000", "https://post-it-heroku.herokuapp.com"],
+    origin: [
+      "http://localhost:3000", 
+      "https://post-it-heroku.herokuapp.com",
+      "https://studenthub-6on8.onrender.com"
+    ],
   },
 });
 
@@ -39,31 +43,44 @@ app.use("/api/users", users);
 app.use("/api/comments", comments);
 app.use("/api/messages", messages);
 
-// Serve static assets in production
-if (process.env.NODE_ENV === "production") {
-  // Set static folder
-  app.use(express.static("client/build"));
-
-  // Any route that is not an API route will be redirected to the index.html
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
-  });
-} else {
-  app.get("/", (req, res) => {
-    res.send("API is running...");
-  });
-}
-
 // For debugging build folder issues
 const fs = require('fs');
 const buildPath = path.resolve(__dirname, 'client', 'build');
-const indexPath = path.resolve(buildPath, 'index.html');
+const publicPath = path.resolve(__dirname, 'client', 'public');
+const indexPathBuild = path.resolve(buildPath, 'index.html');
+const indexPathPublic = path.resolve(publicPath, 'index.html');
 
 console.log('Checking for build folder...');
 console.log(`Build folder path: ${buildPath}`);
 console.log(`Build folder exists: ${fs.existsSync(buildPath)}`);
-if (fs.existsSync(buildPath)) {
-  console.log('Build folder contents:');
-  console.log(fs.readdirSync(buildPath));
-  console.log(`index.html exists: ${fs.existsSync(indexPath)}`);
+console.log(`Public folder path: ${publicPath}`);
+console.log(`Public folder exists: ${fs.existsSync(publicPath)}`);
+
+// Serve static assets in production
+if (process.env.NODE_ENV === "production") {
+  // First check if build folder exists
+  if (fs.existsSync(buildPath) && fs.existsSync(indexPathBuild)) {
+    console.log("Using client/build folder");
+    app.use(express.static("client/build"));
+    app.get("*", (req, res) => {
+      res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+    });
+  } 
+  // Fallback to public folder if build doesn't exist
+  else if (fs.existsSync(publicPath) && fs.existsSync(indexPathPublic)) {
+    console.log("Using client/public folder as fallback");
+    app.use(express.static("client/public"));
+    app.get("*", (req, res) => {
+      res.sendFile(path.resolve(__dirname, "client", "public", "index.html"));
+    });
+  } else {
+    console.log("Neither build nor public folder found");
+    app.get("*", (req, res) => {
+      res.send("Error: Client build not found. Please check deployment logs.");
+
+
+
+
+  app.get("/", (req, res) => {} else {  }    });    res.send("API is running...");
+  });
 }
